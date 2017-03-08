@@ -58,6 +58,10 @@ if [ ! -z "$PYTHON_VERSION_SUFFIX" ]; then
   EXTRA_ARGS+=" --with-python-version-suffix=${PYTHON_VERSION_SUFFIX}"
 fi
 
+if [ ! -z "$PYTHON_EXE" ]; then
+  EXTRA_ARGS+=" --with-python-exe=${PYTHON_EXE}"
+fi
+
 if (( ENABLE_R )); then
   EXTRA_ARGS+=" --enable-r"
 fi

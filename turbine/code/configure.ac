@@ -672,12 +672,33 @@ AC_ARG_WITH(python-lib,
       USE_PYTHON=${USE_PYTHON_LIB} # Copy
     ])
 
+AC_ARG_WITH(python-exe,
+    AS_HELP_STRING([--with-python-exe],
+                   [Use this python executable - provide fully qualified path]),
+    [
+      TURBINE_CODEDIR=`pwd`
+
+      HAVE_PYTHON=1
+      AC_CHECK_FILE(${withval}, [],
+                    [AC_MSG_ERROR([Could not find python!])])
+      USE_PYTHON_INCLUDE=`${withval} ${TURBINE_CODEDIR}/scripts/python-config.py --include-dir` || AC_MSG_ERROR([Failed to run python-config.py script])
+      USE_PYTHON_INCLUDE=$(dirname ${USE_PYTHON_INCLUDE})
+      USE_PYTHON_LIBDIR=`${withval} ${TURBINE_CODEDIR}/scripts/python-config.py --lib-dir` || AC_MSG_ERROR([Failed to run python-config.py script])
+      USE_PY_VERSION_MAJOR=`${withval} ${TURBINE_CODEDIR}/scripts/python-config.py --version-major` || AC_MSG_ERROR([Failed to run python-config.py script])
+      USE_PY_VERSION_MINOR=`${withval} ${TURBINE_CODEDIR}/scripts/python-config.py --version-minor` || AC_MSG_ERROR([Failed to run python-config.py script])
+      USE_PY_VERSION_SUFFIX=`${withval} ${TURBINE_CODEDIR}/scripts/python-config.py --version-suffix` || AC_MSG_ERROR([Failed to run python-config.py script])
+      USE_PYTHON_VERSION=${USE_PY_VERSION_MAJOR}.${USE_PY_VERSION_MINOR}${USE_PY_VERSION_SUFFIX}
+      USE_PYTHON_NAME=`${withval} ${TURBINE_CODEDIR}/scripts/python-config.py --lib-name` || AC_MSG_ERROR([Failed to run python-config.py script])
+  ])
+
 if [[ ${HAVE_PYTHON} == 1 ]]
 then
     USE_PYTHON_NAME=${USE_PYTHON_NAME#lib}
     USE_PYTHON_NAME=${USE_PYTHON_NAME%.so}
     AC_MSG_RESULT([Using Python lib directory: ${USE_PYTHON_LIBDIR}])
     AC_MSG_RESULT([Using Python lib name:      ${USE_PYTHON_NAME}])
+    AC_MSG_RESULT([Using Python include:      ${USE_PYTHON_INCLUDE}])
+    AC_MSG_RESULT([Using Python version:      ${USE_PYTHON_VERSION}])
 fi
 
 AC_DEFINE_UNQUOTED([HAVE_PYTHON],$HAVE_PYTHON,[Enables Python])
